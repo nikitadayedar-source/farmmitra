@@ -1,0 +1,86 @@
+// This is your Prisma schema file.
+// Learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id            String  @id @default(cuid())
+  farmerId      String
+  mobileNumber  String
+  nameEnglish   String
+  nameMarathi   String
+  address       String
+  cloudinaryUrl String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  landDetails LandDetail[]
+  payments    Payment[]
+}
+
+model LandDetail {
+  id          String @id @default(cuid())
+  village     String
+  taluka      String
+  district    String
+  state       String
+  groupNumber String
+  area        Float
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+}
+
+model Payment {
+  id                String        @id @default(cuid())
+  status            PaymentStatus @default(PENDING)
+  razorpayOrderId   String        @unique
+  razorpayPaymentId String?       @unique
+  razorpaySignature String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+}
+
+model HelpRequest {
+  id          String @id @default(cuid())
+  email       String
+  subject     String
+  description String @db.Text
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Admin {
+  id        String    @id @default(cuid())
+  username  String    @unique
+  password  String
+  role      AdminRole @default(ADMIN)
+  createdAt DateTime  @default(now())
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCESS
+  FAILED
+}
+
+enum AdminRole {
+  ADMIN
+  SUPER_ADMIN
+}
