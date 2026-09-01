@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "कृषीबंधन",
+  title: "farmmitra",
   icons: "/favicon.png",
 };
 
